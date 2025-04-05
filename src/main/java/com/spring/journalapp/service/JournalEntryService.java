@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -44,10 +43,6 @@ public class JournalEntryService {
 
     public void saveEntry(JournalEntry entry) {
         journalEntryRepository.save(entry);
-    }
-
-    public List<JournalEntry> getAllEntries() {
-        return journalEntryRepository.findAll();
     }
 
     public Optional<JournalEntry> getEntryById(ObjectId id) {

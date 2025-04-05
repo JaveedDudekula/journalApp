@@ -2,7 +2,6 @@ package com.spring.journalapp.service;
 
 import com.spring.journalapp.entity.User;
 import com.spring.journalapp.repository.UserRepository;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class UserService {
@@ -50,14 +48,6 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(ObjectId id) {
-        return userRepository.findById(id);
-    }
-
-    public void deleteUserById(ObjectId id) {
-        userRepository.deleteById(id);
     }
 
     public void deleteByUserName(String userName) {
