@@ -1,8 +1,11 @@
 package com.spring.journalapp.constants;
 
-public interface AppConstants {
+public final class AppConstants {
 
-    String API_KEY = "<apiKey>";
+    private AppConstants(){
+    }
 
-    String CITY = "<city>";
+    public static final String API_KEY = "<apiKey>";
+
+    public static final String CITY = "<city>";
 }

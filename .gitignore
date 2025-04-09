@@ -20,7 +20,7 @@ target/
 *.ipr
 *.yml
 *.log
-*.properties
+application-keyinfo.properties
 /htmlReport
 /log
 
