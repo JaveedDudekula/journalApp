@@ -10,9 +10,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class UserScheduler {
@@ -35,19 +35,24 @@ public class UserScheduler {
             List<Sentiment> sentimentList = journalEntries.stream()
                     .filter(x -> x.getDate().isAfter(LocalDateTime.now().minusDays(7)) && x.getSentiment() != null)
                     .map(JournalEntry::getSentiment).toList();
-            Map<Sentiment, Long> sentimentsCount = sentimentList.stream()
-                    .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+//            Map<Sentiment, Long> sentimentsCount = sentimentList.stream()
+//            .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+            Map<Sentiment, Integer> sentimentCounts = new HashMap<>();
+            for (Sentiment sentiment : sentimentList) {
+                sentimentCounts.put(sentiment, sentimentCounts.getOrDefault(sentiment, 0) + 1);
+            }
             Sentiment mostFrequentSentiment = null;
             long maxCount = 0;
-            for (Map.Entry<Sentiment, Long> entry : sentimentsCount.entrySet()) {
-                if (entry.getValue() >= maxCount) {
+            for (Map.Entry<Sentiment, Integer> entry : sentimentCounts.entrySet()) {
+                if (entry.getValue() > maxCount) {
                     maxCount = entry.getValue();
                     mostFrequentSentiment = entry.getKey();
                 }
             }
             if (mostFrequentSentiment != null) {
                 emailService.sendMail(user.getEmail(), "Sentiment Analysis for last 7 days",
-                        "Hi " + user.getUserName() + ",\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString());
+                        "Hi " + user.getUserName().substring(0, 1).toUpperCase() + user.getUserName().substring(1)
+                                + ",\n\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString() + ".\n\n\nTeam,\nJournalApp");
             }
         }
     }
