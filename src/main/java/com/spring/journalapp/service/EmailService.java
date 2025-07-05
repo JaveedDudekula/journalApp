@@ -27,7 +27,7 @@ public class EmailService {
             mail.setText(body);
             javaMailSender.send(mail);
         } catch (Exception e) {
-            logger.error("Exception occurred while sendEmail: ", e);
+            logger.error("Exception occurred while sending mail: ", e);
         }
     }
 }

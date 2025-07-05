@@ -31,11 +31,10 @@ public class UserScheduler {
     public void fetchUsersAndSendMailForSA() {
         List<User> userList = userRepository.getUserForSentimentAnalysis();
         for (User user : userList) {
-            List<JournalEntry> journalEntries = user.getJournalEntries();
-            List<Sentiment> sentimentList = journalEntries.stream()
+            List<Sentiment> sentimentList = user.getJournalEntries().stream()
                     .filter(x -> x.getDate().isAfter(LocalDateTime.now().minusDays(7)) && x.getSentiment() != null)
                     .map(JournalEntry::getSentiment).toList();
-//            Map<Sentiment, Long> sentimentsCount = sentimentList.stream()
+//            Map<Sentiment, Long> sentimentCount = sentimentList.stream()
 //            .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
             Map<Sentiment, Integer> sentimentCounts = new HashMap<>();
             for (Sentiment sentiment : sentimentList) {
@@ -52,7 +51,8 @@ public class UserScheduler {
             if (mostFrequentSentiment != null) {
                 emailService.sendMail(user.getEmail(), "Sentiment Analysis for last 7 days",
                         "Hi " + user.getUserName().substring(0, 1).toUpperCase() + user.getUserName().substring(1)
-                                + ",\n\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString() + ".\n\n\nTeam,\nJournalApp");
+                                + ",\n\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString()
+                                + ".\n\n\nTeam,\nJournalApp");
             }
         }
     }

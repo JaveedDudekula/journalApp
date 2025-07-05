@@ -33,13 +33,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> greeting() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        WeatherResponse weatherResponse = weatherService.getWeather("New York");
-        String greeting = "";
-        if (weatherResponse != null) {
-            greeting = ", temperature in NewYork is " + weatherResponse.getCurrent().getTemperature() +
-                    "°C today, feels like " + weatherResponse.getCurrent().getFeelslike() + "°C";
+        String userName = authentication.getName();
+        User existingUser = userService.findByUserName(userName);
+        if (existingUser != null) {
+            WeatherResponse weatherResponse = weatherService.getWeather(existingUser.getCity());
+            String greeting = "";
+            if (weatherResponse != null) {
+                greeting = ", temperature in " + existingUser.getCity() + " is " + weatherResponse.getCurrent().getTemperature() +
+                        "°C today, feels like " + weatherResponse.getCurrent().getFeelslike() + "°C";
+            }
+            return new ResponseEntity<>("Hi " + authentication.getName() + greeting, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Hi " + authentication.getName() + greeting, HttpStatus.OK);
+        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
     }
 
     @PutMapping
