@@ -39,10 +39,14 @@ public class UserController {
             WeatherResponse weatherResponse = weatherService.getWeather(existingUser.getCity());
             String greeting = "";
             if (weatherResponse != null) {
-                greeting = ", temperature in " + existingUser.getCity() + " is " + weatherResponse.getCurrent().getTemperature() +
-                        "°C today, feels like " + weatherResponse.getCurrent().getFeelslike() + "°C";
+                greeting = ", temperature in " + existingUser.getCity() + " is "
+                        + weatherResponse.getCurrent().getTemperature() + "°C today, feels like "
+                        + weatherResponse.getCurrent().getFeelslike() + "°C";
             }
-            return new ResponseEntity<>("Hi " + authentication.getName() + greeting, HttpStatus.OK);
+            return new ResponseEntity<>("Hi "
+                    + authentication.getName().substring(0, 1).toUpperCase()
+                    + authentication.getName().substring(1)
+                    + greeting, HttpStatus.OK);
         }
         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
     }
