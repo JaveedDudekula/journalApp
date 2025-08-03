@@ -28,7 +28,7 @@ public class UserScheduler {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Scheduled(cron = "0 0 10 * * SUN")
+    @Scheduled(cron = "0 43 23 * * SUN")
     public void fetchUsersAndSendMailForSA() {
         List<User> userList = userRepository.getUserForSentimentAnalysis();
         for (User user : userList) {
@@ -52,18 +52,14 @@ public class UserScheduler {
             if (mostFrequentSentiment != null) {
                 SentimentData sentimentData = SentimentData.builder()
                         .email(user.getEmail())
+                        .name(user.getUserName())
+                        .mostFrequentSentiment(mostFrequentSentiment.toString())
                         .sentiment("Hi " + user.getUserName().substring(0, 1).toUpperCase()
                                 + user.getUserName().substring(1)
                                 + ",\n\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString()
                                 + ".\n\n\nTeam,\nJournalApp")
                         .build();
                 kafkaTemplate.send("weekly-sentiments", sentimentData.getEmail(), sentimentData);
-
-//                emailService.sendMail(user.getEmail(), "Sentiment Analysis for last 7 days",
-//                        "Hi " + user.getUserName().substring(0, 1).toUpperCase()
-//                                + user.getUserName().substring(1)
-//                                + ",\n\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString()
-//                                + ".\n\n\nTeam,\nJournalApp");
             }
         }
     }

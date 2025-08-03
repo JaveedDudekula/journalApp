@@ -6,12 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SentimentData {
 
     private String email;
 
     private String sentiment;
+
+    private String name;
+
+    private String mostFrequentSentiment;
 }

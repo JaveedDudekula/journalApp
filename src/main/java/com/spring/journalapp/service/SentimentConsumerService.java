@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class SentimentConsumerService {
 
-    private EmailService emailService;
+    private final EmailService emailService;
+
+    private final SentimentProcessingService sentimentProcessingService;
 
     @Autowired
-    public SentimentConsumerService(EmailService emailService) {
+    public SentimentConsumerService(EmailService emailService, SentimentProcessingService sentimentProcessingService) {
         this.emailService = emailService;
+        this.sentimentProcessingService = sentimentProcessingService;
     }
 
     @KafkaListener(topics = "weekly-sentiments", groupId = "weekly-sentiment-group")
@@ -21,8 +24,15 @@ public class SentimentConsumerService {
     }
 
     private void sendEmail(SentimentData sentimentData) {
-        emailService.sendMail(sentimentData.getEmail(),
-                "Sentiment Analysis for last 7 days",
-                sentimentData.getSentiment());
+        try {
+            sentimentProcessingService.saveSentimentData(sentimentData);
+            emailService.sendMail(
+                    sentimentData.getEmail(),
+                    "Sentiment Analysis for last 7 days",
+                    sentimentData.getSentiment()
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
