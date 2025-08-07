@@ -15,17 +15,17 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 public class JournalApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(JournalApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(JournalApplication.class, args);
+    }
 
-	@Bean
-	public PlatformTransactionManager transactionManager(MongoDatabaseFactory dbFactory){
-		return new MongoTransactionManager(dbFactory);
-	}
+    @Bean
+    public PlatformTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+        return new MongoTransactionManager(dbFactory);
+    }
 
-	@Bean
-	public RestTemplate restTemplate(){
-		return new RestTemplate();
-	}
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }

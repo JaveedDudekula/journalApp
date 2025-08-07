@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisService {
 
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(RedisService.class);
 

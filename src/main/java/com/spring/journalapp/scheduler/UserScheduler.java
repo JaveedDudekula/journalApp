@@ -1,26 +1,26 @@
 package com.spring.journalapp.scheduler;
 
+import com.spring.journalapp.dto.SentimentData;
 import com.spring.journalapp.entity.JournalEntry;
 import com.spring.journalapp.entity.User;
 import com.spring.journalapp.enums.Sentiment;
-import com.spring.journalapp.model.SentimentData;
-import com.spring.journalapp.repository.UserRepositoryImpl;
+import com.spring.journalapp.repository.impl.UserRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @Component
 public class UserScheduler {
 
-    private UserRepositoryImpl userRepository;
+    private final UserRepositoryImpl userRepository;
 
-    private KafkaTemplate<String, SentimentData> kafkaTemplate;
+    private final KafkaTemplate<String, SentimentData> kafkaTemplate;
 
     @Autowired
     public UserScheduler(UserRepositoryImpl userRepository, KafkaTemplate<String, SentimentData> kafkaTemplate) {
@@ -28,7 +28,7 @@ public class UserScheduler {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Scheduled(cron = "0 43 23 * * SUN")
+    @Scheduled(cron = "0 30 20 * * FRI")
     public void fetchUsersAndSendMailForSA() {
         List<User> userList = userRepository.getUserForSentimentAnalysis();
         for (User user : userList) {
@@ -36,7 +36,7 @@ public class UserScheduler {
                     .filter(x -> x.getDate().isAfter(LocalDateTime.now().minusDays(7)) && x.getSentiment() != null)
                     .map(JournalEntry::getSentiment).toList();
 
-            Map<Sentiment, Integer> sentimentCounts = new HashMap<>();
+            Map<Sentiment, Integer> sentimentCounts = new LinkedHashMap<>();
             for (Sentiment sentiment : sentimentList) {
                 sentimentCounts.put(sentiment, sentimentCounts.getOrDefault(sentiment, 0) + 1);
             }
@@ -44,7 +44,7 @@ public class UserScheduler {
             Sentiment mostFrequentSentiment = null;
             long maxCount = 0;
             for (Map.Entry<Sentiment, Integer> entry : sentimentCounts.entrySet()) {
-                if (entry.getValue() > maxCount) {
+                if (entry.getValue() >= maxCount) {
                     maxCount = entry.getValue();
                     mostFrequentSentiment = entry.getKey();
                 }

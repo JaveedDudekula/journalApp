@@ -1,6 +1,6 @@
 package com.spring.journalapp.service;
 
-import com.spring.journalapp.model.SentimentData;
+import com.spring.journalapp.dto.SentimentData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;

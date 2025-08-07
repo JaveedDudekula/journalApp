@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Disabled
-public class UserSchedulerTest {
+class UserSchedulerTest {
 
-    private UserScheduler userScheduler;
+    private final UserScheduler userScheduler;
 
     @Autowired
     public UserSchedulerTest(UserScheduler userScheduler) {
@@ -17,7 +17,7 @@ public class UserSchedulerTest {
     }
 
     @Test
-    public void testFetchUsersAndSendMailForSA(){
+    void testFetchUsersAndSendMailForSA() {
         userScheduler.fetchUsersAndSendMailForSA();
     }
 }

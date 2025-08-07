@@ -1,4 +1,4 @@
-package com.spring.journalapp.model;
+package com.spring.journalapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

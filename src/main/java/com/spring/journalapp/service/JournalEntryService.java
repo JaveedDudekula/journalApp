@@ -1,7 +1,10 @@
 package com.spring.journalapp.service;
 
+import com.spring.journalapp.dto.JournalEntryRequest;
+import com.spring.journalapp.dto.JournalEntryResponse;
 import com.spring.journalapp.entity.JournalEntry;
 import com.spring.journalapp.entity.User;
+import com.spring.journalapp.enums.Sentiment;
 import com.spring.journalapp.repository.JournalEntryRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +17,9 @@ import java.util.Optional;
 @Service
 public class JournalEntryService {
 
-    private JournalEntryRepository journalEntryRepository;
+    private final JournalEntryRepository journalEntryRepository;
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public JournalEntryService(JournalEntryRepository journalEntryRepository, UserService userService) {
@@ -25,13 +28,18 @@ public class JournalEntryService {
     }
 
     @Transactional
-    public void saveEntry(JournalEntry entry, String userName) {
+    public JournalEntryResponse saveEntry(JournalEntryRequest journalEntryRequest, String userName) {
         try {
             User user = userService.findByUserName(userName);
+            JournalEntry entry = new JournalEntry();
+            entry.setTitle(journalEntryRequest.getTitle());
+            entry.setContent(journalEntryRequest.getContent());
+            entry.setSentiment(Sentiment.valueOf(journalEntryRequest.getSentiment().toUpperCase()));
             entry.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryRepository.save(entry);
             user.getJournalEntries().add(saved);
             userService.saveUser(user);
+            return convertEntryToResponse(saved);
         } catch (Exception e) {
             throw new RuntimeException("An error has occurred while saving the entry", e);
         }
@@ -59,5 +67,15 @@ public class JournalEntryService {
             throw new RuntimeException("An exception occurred while deleting the entry", e);
         }
         return removed;
+    }
+
+    public JournalEntryResponse convertEntryToResponse(JournalEntry entry) {
+        return JournalEntryResponse.builder()
+                .id(entry.getId().toString())
+                .title(entry.getTitle())
+                .content(entry.getContent())
+                .date(entry.getDate())
+                .sentiment(entry.getSentiment())
+                .build();
     }
 }

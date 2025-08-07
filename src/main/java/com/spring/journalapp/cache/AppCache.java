@@ -18,7 +18,7 @@ public class AppCache {
         WEATHER_API_TOKEN
     }
 
-    private ConfigJournalAppRepository configJournalAppRepository;
+    private final ConfigJournalAppRepository configJournalAppRepository;
 
     private Map<String, String> appCacheMap;
 

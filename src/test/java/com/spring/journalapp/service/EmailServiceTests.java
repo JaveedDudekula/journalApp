@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Disabled
-public class EmailServiceTests {
+class EmailServiceTests {
 
-    private EmailService emailService;
+    private final EmailService emailService;
 
     @Autowired
     public EmailServiceTests(EmailService emailService) {
@@ -17,7 +17,9 @@ public class EmailServiceTests {
     }
 
     @Test
-    void testSendMail(){
-        emailService.sendMail("javeeddudekula69@gmail.com","Testing java email service","Hi,\nMessage received.");
+    void testSendMail() {
+        emailService.sendMail("javeeddudekula69@gmail.com",
+                "Testing java email service",
+                "Hi,\nMessage received.");
     }
 }

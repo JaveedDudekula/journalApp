@@ -1,5 +1,6 @@
 package com.spring.journalapp.repository;
 
+import com.spring.journalapp.repository.impl.UserRepositoryImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Disabled("tested")
 class UserRepositoryImplTests {
 
-    private UserRepositoryImpl userRepository;
+    private final UserRepositoryImpl userRepository;
 
     @Autowired
     public UserRepositoryImplTests(UserRepositoryImpl userRepository) {

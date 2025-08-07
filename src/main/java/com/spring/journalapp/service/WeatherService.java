@@ -12,11 +12,11 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class WeatherService {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private AppCache appCache;
+    private final AppCache appCache;
 
-    private RedisService redisService;
+    private final RedisService redisService;
 
     @Autowired
     public WeatherService(RestTemplate restTemplate, AppCache appCache, RedisService redisService) {

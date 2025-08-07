@@ -1,4 +1,4 @@
-package com.spring.journalapp.repository;
+package com.spring.journalapp.repository.impl;
 
 import com.spring.journalapp.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +12,14 @@ import java.util.List;
 @Component
 public class UserRepositoryImpl {
 
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     @Autowired
     public UserRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<User> getUserForSentimentAnalysis(){
+    public List<User> getUserForSentimentAnalysis() {
         Query query = new Query();
         query.addCriteria(Criteria.where("email").regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$"));
         query.addCriteria(Criteria.where("sentimentAnalysis").is(true));
