@@ -1,10 +1,13 @@
 package com.spring.journalapp.controller;
 
 import com.spring.journalapp.cache.AppCache;
+import com.spring.journalapp.dto.AppMessage;
+import com.spring.journalapp.dto.ErrorResponseBody;
 import com.spring.journalapp.dto.UserRequest;
 import com.spring.journalapp.dto.UserResponse;
 import com.spring.journalapp.entity.User;
 import com.spring.journalapp.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,38 +43,46 @@ public class AdminController {
         if (allUsers != null && !allUsers.isEmpty()) {
             return new ResponseEntity<>(allUsers, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new AppMessage(HttpStatus.NO_CONTENT.value(), "No users found"),
+                HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/create-admin-user")
-    public ResponseEntity<String> createAdminUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<AppMessage> createAdminUser(@RequestBody @Valid UserRequest userRequest) {
         userService.saveAdmin(userRequest);
-        return new ResponseEntity<>("User created successfully.", HttpStatus.CREATED);
+        return new ResponseEntity<>(new AppMessage(HttpStatus.CREATED.value(), "User created successfully"),
+                HttpStatus.CREATED);
     }
 
     @PatchMapping("/add-role")
-    public ResponseEntity<String> addRoleToExistingUser(@RequestParam String userName, @RequestParam String role) {
+    public ResponseEntity<?> addRoleToExistingUser(@RequestParam String userName, @RequestParam String role) {
         List<String> allowedRoles = Arrays.asList("USER", "ADMIN");
         role = role.toUpperCase();
         if (!allowedRoles.contains(role)) {
-            return ResponseEntity.badRequest().body("Invalid role: " + role);
+            ErrorResponseBody errorResponse = new ErrorResponseBody(HttpStatus.BAD_REQUEST.value(),
+                    "Invalid role: " + role,
+                    Map.of("error", "invalid role"));
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+
         User existingUser = userService.findByUserName(userName);
         if (existingUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            return new ResponseEntity<>(new AppMessage(HttpStatus.NOT_FOUND.value(), "User not found"),
+                    HttpStatus.NOT_FOUND);
         }
+
         boolean updated = userService.updateExistingUserRoles(existingUser, role);
-        if (updated) {
-            return ResponseEntity.ok("Role added successfully.");
-        } else {
-            return ResponseEntity.ok("User already has this role.");
-        }
+        return new ResponseEntity<>(new AppMessage(HttpStatus.OK.value(),
+                updated ? "Role added successfully" : "User already has this role"),
+                HttpStatus.OK);
     }
 
     @GetMapping("/reloadAppCache")
-    public String reloadAppCache() {
+    public ResponseEntity<AppMessage> reloadAppCache() {
         appCache.init();
-        return "Cache reload completed";
+        return new ResponseEntity<>(new AppMessage(HttpStatus.OK.value(),
+                "Cache reload completed"),
+                HttpStatus.OK);
     }
 
     @GetMapping("/getCache")

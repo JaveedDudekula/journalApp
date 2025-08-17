@@ -24,15 +24,11 @@ public class SentimentConsumerService {
     }
 
     private void sendEmail(SentimentData sentimentData) {
-        try {
-            sentimentProcessingService.saveSentimentData(sentimentData);
-            emailService.sendMail(
-                    sentimentData.getEmail(),
-                    "Sentiment Analysis for last 7 days",
-                    sentimentData.getSentiment()
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        sentimentProcessingService.saveSentimentData(sentimentData);
+        emailService.sendMail(
+                sentimentData.getEmail(),
+                "Sentiment Analysis for last 7 days",
+                sentimentData.getSentiment()
+        );
     }
 }

@@ -1,7 +1,9 @@
 package com.spring.journalapp.controller;
 
+import com.spring.journalapp.dto.AppMessage;
 import com.spring.journalapp.dto.UserRequest;
 import com.spring.journalapp.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +24,9 @@ public class PublicController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestBody UserRequest userRequest) {
-        try {
-            userService.saveNewUser(userRequest);
-            return new ResponseEntity<>("User created successfully.", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Invalid request.");
-        }
+    public ResponseEntity<AppMessage> createUser(@RequestBody @Valid UserRequest userRequest) {
+        userService.saveNewUser(userRequest);
+        return new ResponseEntity<>(new AppMessage(HttpStatus.CREATED.value(), "User created successfully"),
+                HttpStatus.CREATED);
     }
 }

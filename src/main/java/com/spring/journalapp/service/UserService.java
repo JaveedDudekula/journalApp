@@ -5,8 +5,6 @@ import com.spring.journalapp.dto.UserRequest;
 import com.spring.journalapp.dto.UserResponse;
 import com.spring.journalapp.entity.User;
 import com.spring.journalapp.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,26 +21,20 @@ public class UserService {
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public void saveNewUser(UserRequest userRequest) {
-        try {
-            User user = new User();
-            user.setUserName(userRequest.getUserName());
-            user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-            user.setRoles(Arrays.asList("USER"));
-            user.setEmail(userRequest.getEmail());
-            user.setSentimentAnalysis(Boolean.parseBoolean(userRequest.getSentimentAnalysis()));
-            user.setCity(userRequest.getCity());
-            userRepository.save(user);
-        } catch (Exception e) {
-            logger.error("Error occurred for {} - ", userRequest.getUserName(), e);
-        }
+        User user = new User();
+        user.setUserName(userRequest.getUserName());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setRoles(Arrays.asList("USER"));
+        user.setEmail(userRequest.getEmail());
+        user.setSentimentAnalysis(Boolean.parseBoolean(userRequest.getSentimentAnalysis()));
+        user.setCity(userRequest.getCity());
+        userRepository.save(user);
     }
 
     public void saveAdmin(UserRequest userRequest) {
@@ -61,25 +53,21 @@ public class UserService {
     }
 
     public void updateExistingUser(User existingUser, UpdateUserRequest userRequest) {
-        try {
-            if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
-                existingUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-            }
-            if (userRequest.getEmail() != null && !userRequest.getEmail().isEmpty()) {
-                existingUser.setEmail(userRequest.getEmail());
-            }
-            if (userRequest.getCity() != null && !userRequest.getCity().isEmpty()) {
-                existingUser.setCity(userRequest.getCity());
-            }
-            if (userRequest.getSentimentAnalysis() != null &&
-                    (userRequest.getSentimentAnalysis().equalsIgnoreCase("true") ||
-                            userRequest.getSentimentAnalysis().equalsIgnoreCase("false"))) {
-                existingUser.setSentimentAnalysis(Boolean.parseBoolean(userRequest.getSentimentAnalysis()));
-            }
-            userRepository.save(existingUser);  // Updates the user
-        } catch (Exception e) {
-            logger.error("Error updating user {}: ", existingUser.getUserName(), e);
+        if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         }
+        if (userRequest.getEmail() != null && !userRequest.getEmail().isEmpty()) {
+            existingUser.setEmail(userRequest.getEmail());
+        }
+        if (userRequest.getCity() != null && !userRequest.getCity().isEmpty()) {
+            existingUser.setCity(userRequest.getCity());
+        }
+        if (userRequest.getSentimentAnalysis() != null &&
+                (userRequest.getSentimentAnalysis().equalsIgnoreCase("true") ||
+                        userRequest.getSentimentAnalysis().equalsIgnoreCase("false"))) {
+            existingUser.setSentimentAnalysis(Boolean.parseBoolean(userRequest.getSentimentAnalysis()));
+        }
+        userRepository.save(existingUser);  // Updates the user
     }
 
     public boolean updateExistingUserRoles(User existingUser, String role) {

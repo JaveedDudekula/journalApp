@@ -1,10 +1,12 @@
 package com.spring.journalapp.controller;
 
 import com.spring.journalapp.api.response.WeatherResponse;
+import com.spring.journalapp.dto.AppMessage;
 import com.spring.journalapp.dto.UpdateUserRequest;
 import com.spring.journalapp.entity.User;
 import com.spring.journalapp.service.UserService;
 import com.spring.journalapp.service.WeatherService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,43 +38,37 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User existingUser = userService.findByUserName(userName);
-        if (existingUser != null) {
-            WeatherResponse weatherResponse = weatherService.getWeather(existingUser.getCity());
-            String greeting = "";
-            if (weatherResponse != null) {
-                greeting = ", temperature in " + existingUser.getCity() + " is "
-                        + weatherResponse.getCurrent().getTemperature() + "°C today, feels like "
-                        + weatherResponse.getCurrent().getFeelslike() + "°C";
-            }
-            return new ResponseEntity<>("Hi "
-                    + authentication.getName().substring(0, 1).toUpperCase()
-                    + authentication.getName().substring(1)
-                    + greeting, HttpStatus.OK);
+        WeatherResponse weatherResponse = weatherService.getWeather(existingUser.getCity());
+        String greeting = "";
+        if (weatherResponse != null) {
+            greeting = ", temperature in " + existingUser.getCity() + " is "
+                    + weatherResponse.getCurrent().getTemperature() + "°C today, feels like "
+                    + weatherResponse.getCurrent().getFeelslike() + "°C";
         }
-        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Hi "
+                + userName.substring(0, 1).toUpperCase()
+                + userName.substring(1)
+                + greeting, HttpStatus.OK);
     }
 
-    @PatchMapping("/update-user")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUserRequest userRequest) {
+    @PatchMapping("/update")
+    public ResponseEntity<AppMessage> updateUser(@RequestBody @Valid UpdateUserRequest userRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User existingUser = userService.findByUserName(userName);
-        if (existingUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
         userService.updateExistingUser(existingUser, userRequest);
-        return ResponseEntity.ok("User updated successfully.");
+        return new ResponseEntity<>(new AppMessage(HttpStatus.OK.value(),
+                "User updated successfully"),
+                HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteByUserName() {
+    @DeleteMapping("/delete")
+    public ResponseEntity<AppMessage> deleteByUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-        User user = userService.findByUserName(userName);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found: " + userName);
-        }
         userService.deleteByUserName(userName);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(new AppMessage(HttpStatus.NO_CONTENT.value(),
+                "User deleted successfully"),
+                HttpStatus.NO_CONTENT);
     }
 }

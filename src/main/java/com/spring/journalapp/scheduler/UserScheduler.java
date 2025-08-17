@@ -28,7 +28,7 @@ public class UserScheduler {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Scheduled(cron = "0 30 20 * * FRI")
+    @Scheduled(cron = "0 30 20 * * SUN")
     public void fetchUsersAndSendMailForSA() {
         List<User> userList = userRepository.getUserForSentimentAnalysis();
         for (User user : userList) {
