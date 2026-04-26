@@ -1,6 +1,7 @@
 package com.spring.journalapp.handler;
 
 import com.spring.journalapp.dto.ErrorResponseBody;
+import com.spring.journalapp.exceptions.MailServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,18 @@ public class JournalAppExceptionHandler {
         ErrorResponseBody errorResponse = new ErrorResponseBody(
                 HttpStatus.BAD_REQUEST.value(),
                 "Duplicate Username",
-                Map.of("error", "Username already taken. Please try with some other value")
+                Map.of("description", "Username already taken. Please try with some other username")
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(MailServiceException.class)
+    public ResponseEntity<ErrorResponseBody> handleMailServiceException(MailServiceException ex) {
+        logger.error("Unexpected error: {}", ex.getMessage(), ex);
+        ErrorResponseBody errorResponse = new ErrorResponseBody(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                Map.of("description", "Some issue observed at mail service, Please try again later")
         );
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -47,12 +59,13 @@ public class JournalAppExceptionHandler {
     // Handle unknown errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseBody> handleUnknownException(Exception ex, HttpServletRequest request) {
-        logger.error("Unexpected error at [{} {}]: {}", request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
-        ErrorResponseBody response = new ErrorResponseBody(
+        logger.error("Unexpected error at [{} {}]: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
+        ErrorResponseBody errorResponse = new ErrorResponseBody(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An unexpected error occurred",
-                Map.of("error", "Unexpected Error Occurred")
+                Map.of("description", "Unexpected Error Occurred")
         );
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

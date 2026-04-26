@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class SentimentProcessingService {
+public class SentimentSqlService {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public SentimentProcessingService(JdbcTemplate jdbcTemplate) {
+    public SentimentSqlService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

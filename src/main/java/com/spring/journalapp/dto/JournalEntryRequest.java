@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class JournalEntryRequest {
 
     @NotBlank(message = "title shouldn't be null or blank")
-    @Pattern(regexp = "^[\\w\\-.\\s]+$", message = "title contains invalid characters")
+    @Pattern(regexp = "^[\\w\\-.,\\s]+$", message = "title contains invalid characters")
     private String title;
 
     private String content;

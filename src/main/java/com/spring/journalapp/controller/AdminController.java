@@ -59,18 +59,14 @@ public class AdminController {
         List<String> allowedRoles = Arrays.asList("USER", "ADMIN");
         role = role.toUpperCase();
         if (!allowedRoles.contains(role)) {
-            ErrorResponseBody errorResponse = new ErrorResponseBody(HttpStatus.BAD_REQUEST.value(),
-                    "Invalid role: " + role,
-                    Map.of("error", "invalid role"));
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(new ErrorResponseBody(HttpStatus.BAD_REQUEST.value(),
+                    "Invalid role", Map.of("description", "invalid role: " + role)));
         }
-
         User existingUser = userService.findByUserName(userName);
         if (existingUser == null) {
             return new ResponseEntity<>(new AppMessage(HttpStatus.NOT_FOUND.value(), "User not found"),
                     HttpStatus.NOT_FOUND);
         }
-
         boolean updated = userService.updateExistingUserRoles(existingUser, role);
         return new ResponseEntity<>(new AppMessage(HttpStatus.OK.value(),
                 updated ? "Role added successfully" : "User already has this role"),

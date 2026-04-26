@@ -8,27 +8,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class SentimentConsumerService {
 
-    private final EmailService emailService;
-
-    private final SentimentProcessingService sentimentProcessingService;
+    private final SentimentEmailProcessor processor;
 
     @Autowired
-    public SentimentConsumerService(EmailService emailService, SentimentProcessingService sentimentProcessingService) {
-        this.emailService = emailService;
-        this.sentimentProcessingService = sentimentProcessingService;
+    public SentimentConsumerService(SentimentEmailProcessor processor) {
+        this.processor = processor;
     }
 
-    @KafkaListener(topics = "weekly-sentiments", groupId = "weekly-sentiment-group")
+    @KafkaListener(topics = "weekly-sentiments",
+            groupId = "weekly-sentiment-group",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consume(SentimentData sentimentData) {
-        sendEmail(sentimentData);
-    }
-
-    private void sendEmail(SentimentData sentimentData) {
-        sentimentProcessingService.saveSentimentData(sentimentData);
-        emailService.sendMail(
-                sentimentData.getEmail(),
-                "Sentiment Analysis for last 7 days",
-                sentimentData.getSentiment()
-        );
+        processor.process(sentimentData);
     }
 }
