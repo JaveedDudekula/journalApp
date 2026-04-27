@@ -40,7 +40,7 @@ public class UserController {
         User existingUser = userService.findByUserName(userName);
         WeatherResponse weatherResponse = weatherService.getWeather(existingUser.getCity());
         String greeting = "";
-        if (weatherResponse != null) {
+        if (weatherResponse != null && weatherResponse.getCurrent() != null) {
             greeting = ", temperature in " + existingUser.getCity() + " is "
                     + weatherResponse.getCurrent().getTemperature() + "°C today, feels like "
                     + weatherResponse.getCurrent().getFeelslike() + "°C";

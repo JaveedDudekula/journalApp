@@ -2,6 +2,7 @@ package com.spring.journalapp.handler;
 
 import com.spring.journalapp.dto.ErrorResponseBody;
 import com.spring.journalapp.exceptions.MailServiceException;
+import com.spring.journalapp.exceptions.WeatherServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,17 @@ public class JournalAppExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),
                 Map.of("description", "Some issue observed at mail service, Please try again later")
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(WeatherServiceException.class)
+    public ResponseEntity<ErrorResponseBody> handleWeatherServiceException(WeatherServiceException ex) {
+        logger.error("Unexpected error: {}", ex.getMessage(), ex);
+        ErrorResponseBody errorResponse = new ErrorResponseBody(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                Map.of("description", "Your Weather API request failed. Please try again or contact support.")
         );
         return ResponseEntity.badRequest().body(errorResponse);
     }
