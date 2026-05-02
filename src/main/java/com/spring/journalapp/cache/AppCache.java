@@ -15,7 +15,8 @@ public class AppCache {
 
     public enum keys {
         WEATHER_API_URL,
-        WEATHER_API_TOKEN
+        WEATHER_API_TOKEN,
+        JWT_SECRET_KEY
     }
 
     private final ConfigJournalAppRepository configJournalAppRepository;

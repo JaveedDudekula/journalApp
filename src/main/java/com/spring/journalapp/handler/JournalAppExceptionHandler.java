@@ -1,6 +1,7 @@
 package com.spring.journalapp.handler;
 
 import com.spring.journalapp.dto.ErrorResponseBody;
+import com.spring.journalapp.exceptions.IncorrectCredentialsException;
 import com.spring.journalapp.exceptions.MailServiceException;
 import com.spring.journalapp.exceptions.WeatherServiceException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,6 +65,17 @@ public class JournalAppExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),
                 Map.of("description", "Your Weather API request failed. Please try again or contact support.")
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(IncorrectCredentialsException.class)
+    public ResponseEntity<ErrorResponseBody> handleIncorrectCredentialsException(IncorrectCredentialsException ex) {
+        logger.error("Exception occurred while creating AuthenticationToken: {}", ex.getMessage(), ex);
+        ErrorResponseBody errorResponse = new ErrorResponseBody(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                Map.of("description", "Incorrect Username or Password")
         );
         return ResponseEntity.badRequest().body(errorResponse);
     }

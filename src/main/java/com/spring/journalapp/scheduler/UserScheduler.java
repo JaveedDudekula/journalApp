@@ -60,7 +60,6 @@ public class UserScheduler {
                                 + ",\n\nYour Sentiment for last 7 days is " + mostFrequentSentiment.toString()
                                 + ".\n\n\nTeam,\nJournalApp")
                         .build();
-//                kafkaTemplate.send("weekly-sentiments", sentimentData.getEmail(), sentimentData);
                 kafkaTemplate.executeInTransaction(kt -> {
                     kt.send("weekly-sentiments", sentimentData.getEmail(), sentimentData);
                     return true;

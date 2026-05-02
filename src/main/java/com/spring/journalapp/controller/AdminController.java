@@ -1,6 +1,7 @@
 package com.spring.journalapp.controller;
 
 import com.spring.journalapp.cache.AppCache;
+import com.spring.journalapp.constants.AppConstants;
 import com.spring.journalapp.dto.AppMessage;
 import com.spring.journalapp.dto.ErrorResponseBody;
 import com.spring.journalapp.dto.UserRequest;
@@ -56,7 +57,7 @@ public class AdminController {
 
     @PatchMapping("/add-role")
     public ResponseEntity<?> addRoleToExistingUser(@RequestParam String userName, @RequestParam String role) {
-        List<String> allowedRoles = Arrays.asList("USER", "ADMIN");
+        List<String> allowedRoles = Arrays.asList(AppConstants.ROLE_USER, AppConstants.ROLE_ADMIN);
         role = role.toUpperCase();
         if (!allowedRoles.contains(role)) {
             return ResponseEntity.badRequest().body(new ErrorResponseBody(HttpStatus.BAD_REQUEST.value(),

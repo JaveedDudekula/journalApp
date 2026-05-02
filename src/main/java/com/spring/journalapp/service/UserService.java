@@ -1,5 +1,6 @@
 package com.spring.journalapp.service;
 
+import com.spring.journalapp.constants.AppConstants;
 import com.spring.journalapp.dto.UpdateUserRequest;
 import com.spring.journalapp.dto.UserRequest;
 import com.spring.journalapp.dto.UserResponse;
@@ -30,7 +31,7 @@ public class UserService {
         User user = new User();
         user.setUserName(userRequest.getUserName());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        user.setRoles(Arrays.asList("USER"));
+        user.setRoles(new ArrayList<>(List.of(AppConstants.ROLE_USER)));
         user.setEmail(userRequest.getEmail());
         user.setSentimentAnalysis(Boolean.parseBoolean(userRequest.getSentimentAnalysis()));
         user.setCity(userRequest.getCity());
@@ -41,7 +42,7 @@ public class UserService {
         User user = new User();
         user.setUserName(userRequest.getUserName());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        user.setRoles(Arrays.asList("USER", "ADMIN"));
+        user.setRoles(Arrays.asList(AppConstants.ROLE_USER, AppConstants.ROLE_ADMIN));
         user.setEmail(userRequest.getEmail());
         user.setSentimentAnalysis(Boolean.parseBoolean(userRequest.getSentimentAnalysis()));
         user.setCity(userRequest.getCity());
