@@ -6,10 +6,10 @@ Steps to run this journal application in local.
 
 Go to /Softwares/kafka/bin/win and run below cmds in separate windows
 
-Start zookeeper
+Start zookeeper - 
 zookeeper-server-start.bat ..\..\config\zookeeper.properties
 
-Start below three kafka servers
+Start below three kafka servers -
 kafka-server-start.bat ..\..\config\server.properties
 
 kafka-server-start.bat ..\..\config\server-1.properties
